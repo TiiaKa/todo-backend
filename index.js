@@ -65,12 +65,7 @@ app.put('/api/tehtavat/:id', async (req, res) => {
   }
 });
 
-const PORT = process.env.PORT || 3001;
-app.listen(PORT, () => {
-  console.log(`Palvelin käynnissä portissa ${PORT}`);
-});
-
-app.post('/api/init-db', async (req, res) => {
+app.get('/api/init-db', async (req, res) => {
   try {
     await pool.query(`
       CREATE TABLE IF NOT EXISTS tehtavat (
@@ -84,4 +79,9 @@ app.post('/api/init-db', async (req, res) => {
     console.error(err.message);
     res.status(500).send('Virhe taulun luonnissa');
   }
+});
+
+const PORT = process.env.PORT || 3001;
+app.listen(PORT, () => {
+  console.log(`Palvelin käynnissä portissa ${PORT}`);
 });
