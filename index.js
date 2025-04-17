@@ -7,6 +7,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+
 app.get('/', (req, res) => {
   res.send('Todo-backend toimii! 🚀');
 });
@@ -37,6 +38,7 @@ app.post('/api/tehtavat', async (req, res) => {
   }
 });
 
+
 // DELETE
 app.delete('/api/tehtavat/:id', async (req, res) => {
   const { id } = req.params;
@@ -62,6 +64,16 @@ app.put('/api/tehtavat/:id', async (req, res) => {
   } catch (err) {
     console.error(err.message);
     res.status(500).send('Virhe päivittäessä tehtävää');
+  }
+});
+
+app.post('/api/tehtavat/reset', async (req, res) => {
+  try {
+    await pool.query('DELETE FROM tehtavat');
+    res.status(200).json({ message: 'Kaikki tehtävät poistettu' });
+  } catch (err) {
+    console.error('Virhe poistettaessa tehtäviä:', err);
+    res.status(500).send('Virhe poistettaessa tehtäviä');
   }
 });
 
