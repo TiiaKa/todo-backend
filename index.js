@@ -7,6 +7,10 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+app.get('/', (req, res) => {
+  res.send('Todo-backend toimii! 🚀');
+});
+
 // GET
 app.get('/api/tehtavat', async (req, res) => {
   try {
