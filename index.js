@@ -22,6 +22,16 @@ app.get('/api/tehtavat', async (req, res) => {
     res.status(500).send('Virhe tietokannassa');
   }
 });
+// tehtävien resetointi
+app.post('/api/tehtavat/reset', async (req, res) => {
+  try {
+    await Tehtava.deleteMany({});
+    res.status(200).json({ message: "Kaikki tehtävät poistettu" });
+  } catch (err) {
+    res.status(500).json({ error: "Virhe nollatessa tehtäviä" });
+  }
+});
+
 
 // POST
 app.post('/api/tehtavat', async (req, res) => {
