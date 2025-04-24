@@ -24,11 +24,11 @@ app.get('/api/tehtavat', async (req, res) => {
 });
 // tehtävien resetointi
 app.post('/api/tehtavat', async (req, res) => {
-  const { nimi } = req.body;
+  const { nimi, deadline, tags } = req.body;
   try {
     const result = await pool.query(
-      'INSERT INTO tehtavat (nimi, tehty) VALUES ($1, false) RETURNING *',
-      [nimi]
+      'INSERT INTO tehtavat (nimi, tehty, deadline, tags) VALUES ($1, false, $2, $3) RETURNING *',
+      [nimi, deadline, tags]
     );
     res.status(201).json(result.rows[0]);
   } catch (err) {
@@ -53,11 +53,11 @@ app.delete('/api/tehtavat/:id', async (req, res) => {
 // PUT
 app.put('/api/tehtavat/:id', async (req, res) => {
   const { id } = req.params;
-  const { nimi, tehty } = req.body;
+  const { nimi, tehty, deadline, tags } = req.body;
   try {
     const result = await pool.query(
-      'UPDATE tehtavat SET nimi = $1, tehty = $2 WHERE id = $3 RETURNING *',
-      [nimi, tehty, id]
+      'UPDATE tehtavat SET nimi = $1, tehty = $2, deadline = $3, tags = $4 WHERE id = $5 RETURNING *',
+      [nimi, tehty, deadline, tags, id]
     );
     res.json(result.rows[0]);
   } catch (err) {
@@ -96,3 +96,6 @@ const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
   console.log(`Palvelin käynnissä portissa ${PORT}`);
 });
+
+
+
