@@ -9,7 +9,7 @@ app.use(express.json());
 
 
 app.get('/', (req, res) => {
-  res.send('Todo-backend toimii! 🚀');
+  res.send('Todo-backend toimii!');
 });
 
 // GET
@@ -24,11 +24,12 @@ app.get('/api/tehtavat', async (req, res) => {
 });
 // tehtävien resetointi
 app.post('/api/tehtavat', async (req, res) => {
-  const { nimi, deadline, tags } = req.body;
+  console.log('POST body:', req.body);
+  const { nimi, deadline, tags, kategoria } = req.body;
   try {
     const result = await pool.query(
-      'INSERT INTO tehtavat (nimi, tehty, deadline, tags) VALUES ($1, false, $2, $3) RETURNING *',
-      [nimi, deadline, tags]
+      'INSERT INTO tehtavat (nimi, tehty, deadline, tags, kategoria) VALUES ($1, false, $2, $3, $4) RETURNING *',
+      [nimi, deadline, tags, kategoria]
     );
     res.status(201).json(result.rows[0]);
   } catch (err) {
@@ -53,11 +54,11 @@ app.delete('/api/tehtavat/:id', async (req, res) => {
 // PUT
 app.put('/api/tehtavat/:id', async (req, res) => {
   const { id } = req.params;
-  const { nimi, tehty, deadline, tags } = req.body;
+  const { nimi, tehty, deadline, tags, kategoria } = req.body;
   try {
     const result = await pool.query(
-      'UPDATE tehtavat SET nimi = $1, tehty = $2, deadline = $3, tags = $4 WHERE id = $5 RETURNING *',
-      [nimi, tehty, deadline, tags, id]
+      'UPDATE tehtavat SET nimi = $1, tehty = $2, deadline = $3, tags = $4, kategoria = $5 WHERE id = $6 RETURNING *',
+      [nimi, tehty, deadline, tags, kategoria, id]
     );
     res.json(result.rows[0]);
   } catch (err) {
@@ -96,7 +97,8 @@ app.get('/api/update-db', async (req, res) => {
   try {
     await pool.query(`ALTER TABLE tehtavat ADD COLUMN IF NOT EXISTS deadline DATE`);
     await pool.query(`ALTER TABLE tehtavat ADD COLUMN IF NOT EXISTS tags TEXT[]`);
-    res.send('Taulu päivitetty: deadline ja tags lisätty!');
+    await pool.query(`ALTER TABLE tehtavat ADD COLUMN IF NOT EXISTS kategoria TEXT`);
+    res.send('Taulu päivitetty: deadline, tags ja kategoria lisätty!');
   } catch (err) {
     console.error(err.message);
     res.status(500).send('Virhe taulun päivityksessä');
