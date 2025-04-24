@@ -92,6 +92,18 @@ app.get('/api/init-db', async (req, res) => {
   }
 });
 
+app.get('/api/update-db', async (req, res) => {
+  try {
+    await pool.query(`ALTER TABLE tehtavat ADD COLUMN IF NOT EXISTS deadline DATE`);
+    await pool.query(`ALTER TABLE tehtavat ADD COLUMN IF NOT EXISTS tags TEXT[]`);
+    res.send('Taulu päivitetty: deadline ja tags lisätty!');
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send('Virhe taulun päivityksessä');
+  }
+});
+
+
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
   console.log(`Palvelin käynnissä portissa ${PORT}`);
