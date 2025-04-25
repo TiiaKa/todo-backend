@@ -8,4 +8,8 @@ const pool = new Pool({
   },
 });
 
+pool.query('SELECT NOW()') //testataan saako pool yhteyden tietokantaan
+  .then(res => console.log('DB yhteys OK:', res.rows[0]))
+  .catch(err => console.error('DB YHTEYS VIRHE:', err));
+
 module.exports = pool;
